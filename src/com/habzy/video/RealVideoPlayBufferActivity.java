@@ -42,10 +42,10 @@ public class RealVideoPlayBufferActivity extends Activity implements Callback {
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
 		// Use socket
-		// initSocket();
-
+		initSocket();
+		transBuffer();
 		// use fileoutputstream
-		initFOS();
+		// initFOS();
 
 	}
 
@@ -80,11 +80,11 @@ public class RealVideoPlayBufferActivity extends Activity implements Callback {
 				// mfd = aFD.getFileDescriptor();
 
 				// The video from local socket.
-				// transBuffer();
-				// mfd = receiver.getFileDescriptor();
+				
+				mfd = receiver.getFileDescriptor();
 
 				// The video from OutputStream.
-				mfd = fos.getFD();
+				// mfd = fos.getFD();
 
 				mPlayer.setDataSource(mfd, 49, Integer.MAX_VALUE
 						- (Integer.MAX_VALUE % 32));
@@ -105,31 +105,32 @@ public class RealVideoPlayBufferActivity extends Activity implements Callback {
 
 	}
 
+	
 	FileOutputStream fos;
-
 	private void initFOS() {
-//		fos = new FileOutputStream(new FileDescriptor());
-//		new Thread() {
-//			public void run() {
-//				byte[] buffer = new byte[1024];
-//				while (getBuffer(buffer)) {
-//					try {
-//						fos.write(buffer, 0, 1024);
-//					} catch (IOException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
-//
-//			};
-//		}.start();
-		
-		try {
-			fos = new FileOutputStream(getAssets().openFd("play.3gp").getFileDescriptor());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fos = new FileOutputStream(new FileDescriptor());
+		new Thread() {
+			public void run() {
+				byte[] buffer = new byte[1024];
+				while (getBuffer(buffer)) {
+					try {
+						fos.write(buffer, 0, 1024);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+			};
+		}.start();
+
+//		try {
+//			fos = new FileOutputStream(getAssets().openFd("play.3gp")
+//					.getFileDescriptor());
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	private LocalSocket receiver, sender;
@@ -252,7 +253,7 @@ public class RealVideoPlayBufferActivity extends Activity implements Callback {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (null != mPlayer) {
 			mPlayer.release();
 			mPlayer = null;
